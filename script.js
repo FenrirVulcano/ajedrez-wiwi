@@ -95,8 +95,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function colocarPieza(i) {
         if (juegoTerminado) return;
 
-        if (piezasColocadas === 0 && turnoJugador === 1 && fichaSeleccionada.tamano === 3) {
-            showMessage("Regla especial: El Jugador 1 no puede usar una ficha grande en el primer turno.");
+        if (piezasColocadas === 0 && turnoJugador === 1 && fichaSeleccionada.tamano === 3 && i === 4) {
+            showMessage("Regla especial: El Jugador 1 no puede usar una ficha grande en la casilla central en el primer turno.");
             return;
         }
 
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 const currentPlayer = isMaximizingPlayer ? playerFor : (3 - playerFor);
                 let possibleMoves = getPossibleMoves(boardState, availablePieces, currentPlayer);
                 if (boardState.filter(p => p !== null).length === 0 && currentPlayer === 1) {
-                    possibleMoves = possibleMoves.filter(move => move.tamano !== 3);
+                    possibleMoves = possibleMoves.filter(move => !(move.tamano === 3 && move.index === 4));
                 }
                 if (possibleMoves.length === 0) {
                         return { score: evaluateBoard(boardState, playerFor, availablePieces, depth) };
