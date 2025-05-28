@@ -1,49 +1,72 @@
-// Ruta del archivo: netlify/functions/get-knowledge.js
+// netlify/functions/get-knowledge.js
 
-// 1. Importamos la "caja de herramientas" de Firebase que acabamos de instalar.
 const admin = require('firebase-admin');
 
-// 2. Leemos la "llave secreta" que guardaste en Netlify en el Paso 4.
-//    JSON.parse la convierte de texto plano a un objeto que Firebase entiende.
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+// --- Bloque de Inicialización Seguro (Idéntico al de save-knowledge.js) ---
 
-// 3. Nos conectamos a tu proyecto de Firebase.
-//    Esta línea es una seguridad para evitar que se conecte múltiples veces y dé error.
+// Verifica que las variables de entorno existan antes de usarlas
+if (!process.env.FIREBASE_PRIVATE_KEY) {
+  // Este error detendrá la ejecución si las credenciales no están configuradas
+  throw new Error("La variable de entorno FIREBASE_PRIVATE_KEY no está configurada.");
+}
+
+// Carga las credenciales desde las variables de entorno de Netlify
+const serviceAccount = {
+  type: "service_account",
+  project_id: process.env.FIREBASE_PROJECT_ID,
+  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+  private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  client_id: process.env.FIREBASE_CLIENT_ID,
+  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  token_uri: "https://oauth2.googleapis.com/token",
+  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL
+};
+
+// Inicializa la app de Firebase solo si no ha sido inicializada antes
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
 }
 
-// 4. Obtenemos acceso a la base de datos (Firestore).
 const db = admin.firestore();
 
-// 5. Esta es la función principal que se ejecuta cuando el juego la llama.
+// --- Fin del Bloque de Inicialización ---
+
+
 exports.handler = async (event) => {
-    try {
-        // 6. Le damos la ruta exacta de los datos que queremos buscar.
-        //    Imagina que `aiKnowledge` es un cajón y `knowledgeBook` es una carpeta.
-        const docRef = db.collection('aiKnowledge').doc('knowledgeBook');
-        const doc = await docRef.get(); // Le decimos: "Trae lo que hay en esa carpeta".
+  if (event.httpMethod !== 'GET') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  }
 
-        // 7. Si la "carpeta" (documento) no existe, devolvemos una lista vacía.
-        if (!doc.exists) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify([]),
-            };
-        }
+  try {
+    const knowledgeCollection = db.collection('knowledge');
+    const snapshot = await knowledgeCollection.get();
 
-        // 8. Si existe, extraemos los datos y se los enviamos al juego.
-        const knowledgeData = doc.data().book;
-        return {
-            statusCode: 200,
-            body: JSON.stringify(knowledgeData),
-        };
-
-    } catch (error) {
-        // Si algo sale mal, registramos el error.
-        console.error('Error al obtener el conocimiento:', error);
-        return { statusCode: 500, body: error.toString() };
+    if (snapshot.empty) {
+      console.log('No se encontró conocimiento previo.');
+      // Devuelve un array vacío si no hay nada en la base de datos
+      return {
+        statusCode: 200,
+        body: JSON.stringify([])
+      };
     }
+    
+    // Convierte los documentos de Firestore al formato que el frontend espera: [ [key, value], [key, value] ]
+    const knowledgeData = snapshot.docs.map(doc => [doc.id, doc.data()]);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(knowledgeData),
+    };
+
+  } catch (error) {
+    console.error("Error al cargar el conocimiento:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Hubo un error interno al cargar los datos." }),
+    };
+  }
 };
