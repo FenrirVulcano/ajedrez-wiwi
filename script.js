@@ -1,4 +1,25 @@
 document.addEventListener('DOMContentLoaded', (event) => {
+    // --- LÓGICA DEL TEMA OSCURO ---
+    const themeToggleButton = document.getElementById('theme-toggle-button');
+    const currentTheme = localStorage.getItem('theme');
+
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggleButton.textContent = '☀️';
+    }
+
+    themeToggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        let theme = 'light';
+        if (document.body.classList.contains('dark-mode')) {
+            theme = 'dark';
+            themeToggleButton.textContent = '☀️';
+        } else {
+            themeToggleButton.textContent = '🌙';
+        }
+        localStorage.setItem('theme', theme);
+    });
+
     // --- VARIABLES DEL JUEGO ---
     const tablero = document.getElementById('tablero');
     let estado = Array(9).fill(null);
@@ -45,9 +66,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     // --- Asignación de eventos a los botones ---
-    document.querySelector('button[onclick="reiniciarJuego()"]').onclick = reiniciarJuego;
-    document.getElementById('sugerencia-j1').onclick = () => sugerirMejorJugada(1);
-    document.getElementById('sugerencia-j2').onclick = () => sugerirMejorJugada(2);
+    window.reiniciarJuego = reiniciarJuego;
+    window.sugerirMejorJugada = sugerirMejorJugada;
 
     function inicializarLibroDeAperturas() {
         openingBook.clear();

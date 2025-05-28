@@ -9,34 +9,38 @@
 </head>
 <body>
 
-    <h2>Ajedrez de Zongzi</h2>
+    <div class="container">
+        <button id="theme-toggle-button">🌙</button>
 
-    <div class="panel">
-        <div id="jugador1-panel" class="jugador-fichas">
-            <p>Jugador 1 (Púrpura)</p>
-            <div class="ficha-opcion" data-jugador="1" data-tamano="1"><div class="pieza p1 t1"></div>Pequeña (<span id="cantidad-p1-t1">3</span>)</div>
-            <div class="ficha-opcion" data-jugador="1" data-tamano="2"><div class="pieza p1 t2"></div>Mediana (<span id="cantidad-p1-t2">3</span>)</div>
-            <div class="ficha-opcion" data-jugador="1" data-tamano="3"><div class="pieza p1 t3"></div>Grande (<span id="cantidad-p1-t3">2</span>)</div>
+        <h2>Ajedrez de Zongzi</h2>
+
+        <div class="panel">
+            <div id="jugador1-panel" class="jugador-fichas">
+                <p>Jugador 1 (Púrpura)</p>
+                <div class="ficha-opcion" data-jugador="1" data-tamano="1"><div class="pieza p1 t1"></div>Pequeña (<span id="cantidad-p1-t1">3</span>)</div>
+                <div class="ficha-opcion" data-jugador="1" data-tamano="2"><div class="pieza p1 t2"></div>Mediana (<span id="cantidad-p1-t2">3</span>)</div>
+                <div class="ficha-opcion" data-jugador="1" data-tamano="3"><div class="pieza p1 t3"></div>Grande (<span id="cantidad-p1-t3">2</span>)</div>
+            </div>
+            <div id="jugador2-panel" class="jugador-fichas">
+                <p>Jugador 2 (Verde)</p>
+                <div class="ficha-opcion" data-jugador="2" data-tamano="1"><div class="pieza p2 t1"></div>Pequeña (<span id="cantidad-p2-t1">3</span>)</div>
+                <div class="ficha-opcion" data-jugador="2" data-tamano="2"><div class="pieza p2 t2"></div>Mediana (<span id="cantidad-p2-t2">3</span>)</div>
+                <div class="ficha-opcion" data-jugador="2" data-tamano="3"><div class="pieza p2 t3"></div>Grande (<span id="cantidad-p2-t3">2</span>)</div>
+            </div>
         </div>
-        <div id="jugador2-panel" class="jugador-fichas">
-            <p>Jugador 2 (Verde)</p>
-            <div class="ficha-opcion" data-jugador="2" data-tamano="1"><div class="pieza p2 t1"></div>Pequeña (<span id="cantidad-p2-t1">3</span>)</div>
-            <div class="ficha-opcion" data-jugador="2" data-tamano="2"><div class="pieza p2 t2"></div>Mediana (<span id="cantidad-p2-t2">3</span>)</div>
-            <div class="ficha-opcion" data-jugador="2" data-tamano="3"><div class="pieza p2 t3"></div>Grande (<span id="cantidad-p2-t3">2</span>)</div>
+
+        <div class="info" id="estadoJuego">Turno de Jugador 1</div>
+        <div class="tablero" id="tablero"></div>
+        
+        <div>
+            <button onclick="reiniciarJuego()">Reiniciar Juego</button>
         </div>
-    </div>
 
-    <div class="info" id="estadoJuego">Turno de Jugador 1</div>
-    <div class="tablero" id="tablero"></div>
-    
-    <div>
-        <button onclick="reiniciarJuego()">Reiniciar Juego</button>
-    </div>
-
-    <div class="seccion-ia">
-        <h3>Sugerencia de Jugada</h3>
-        <button id="sugerencia-j1" onclick="sugerirMejorJugada(1)">Sugerencia para Jugador 1</button>
-        <button id="sugerencia-j2" onclick="sugerirMejorJugada(2)">Sugerencia para Jugador 2</button>
+        <div class="seccion-ia">
+            <h3>Sugerencia de Jugada</h3>
+            <button id="sugerencia-j1" onclick="sugerirMejorJugada(1)">Sugerencia para Jugador 1</button>
+            <button id="sugerencia-j2" onclick="sugerirMejorJugada(2)">Sugerencia para Jugador 2</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
